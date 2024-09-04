@@ -144,7 +144,7 @@ def my_answer29(str):
 	return 39
 #wrong
 def my_answer30(str):
-	return 1188993246 + 1443
+	return 3775708311
 	
 def my_answer31(str):
 	return '0.client-channel.google.com'

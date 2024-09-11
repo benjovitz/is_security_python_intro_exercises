@@ -2,7 +2,7 @@
 
 from socket import *
 server_name="localhost"
-server_port = 12000
+server_port = 3000
 client_socket = socket(AF_INET,SOCK_STREAM)
 client_socket.connect((server_name,server_port))
 while True:

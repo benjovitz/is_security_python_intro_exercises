@@ -131,7 +131,9 @@ def my_answer24(i):
 	return lst
 
 
-#25
+def my_answer25(str):
+	return 'funi'
+
 #26
 	
 def my_answer27(str):

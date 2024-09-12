@@ -14,34 +14,36 @@ http_header_ok = open("http-ok.txt", "r").read()
 http_header_not_found = open("http-notfound.txt", "r").read()
 html_not_found = open("not-found.html", "r").read()
 
-html_not_found = http_header_not_found + html_not_found
 
 def route_finder(route):
     route = route.split()
     route = route[1]
     if route == "/":
         html = open("index.html", "r").read()
-        html = http_header_ok + html
-        return html
+        html_with_header = http_header_ok + html
+        return (html, html_with_header) 
     route = route[1::].lower()
     try:
         html = open(f"{route}.html", "r").read()
-        html = http_header_ok + html
-        return html
+        html_with_header = http_header_ok + html
+        return (html, html_with_header) 
     except:
-        return html_not_found
+        return (html_not_found, http_header_not_found + html_not_found)
 
-def add_log_entry(route, response):
+def add_log_entry(request, payload, full_response):
      log_file = open("log.txt", "a")
-     route = route.split()
-     ip = route[4].split(":")
-     log_entry = f"{ip[0]} - - [{datetime.datetime.now()}]"
+     request = request.split()
+     ip = request[4].split(":")
+     full_response = full_response.split()
+     log_entry = f'{ip[0]} - - [{datetime.datetime.now()}] "{request[0]} {request[1]} {request[2]}" {full_response[1]} {len(payload)} \r\n'
+     log_file.write(log_entry)
+     log_file.close()
 
 while True:
     conn_socket, client_address = server_socket.accept()
-    route = conn_socket.recv(2048).decode().upper()
-    route = route_finder(route)
-    conn_socket.send(route.encode())
-    #print("connection received from {}, and {} is sent back".format(client_address[1], route))
+    request = conn_socket.recv(2048).decode().upper()
+    response = route_finder(request)
+    add_log_entry(request, response[0], response[1])
+    conn_socket.send(response[1].encode())
     conn_socket.close()
 server_socket.close()
